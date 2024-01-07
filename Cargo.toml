@@ -1,0 +1,10 @@
+[package]
+name = "mutability_marker"
+version = "0.1.0"
+edition = "2021"
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/DouglasDwyer/mutability_marker"
+readme = "README.md"
+description = """
+Marker types describing mutability.
+"""

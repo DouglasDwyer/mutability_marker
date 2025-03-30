@@ -17,14 +17,32 @@ pub struct Mut;
 pub trait Mutability: private::MutabilityInner {
     /// The reference type associated with this mutability.
     type Ref<'a, T: 'a + ?Sized>: Deref<Target = T>;
+
+    /// Allows for choosing between one of two types based upon whether this
+    /// is [`Const`] (in which case `I` is chosen) or [`Mut`] (in which case `M` is chosen).
+    type Select<I, M>;
+
+    /// Allows for choosing between one of two values based upon whether this
+    /// is [`Const`] (in which case `immut` is chosen) or [`Mut`] (in which case `mut` is chosen).
+    fn select<I, M>(immut: I, mutable: M) -> Self::Select<I, M>;
 }
 
 impl Mutability for Const {
     type Ref<'a, T: 'a + ?Sized> = &'a T;
+    type Select<I, M> = I;
+
+    fn select<I, M>(immut: I, _: M) -> Self::Select<I, M> {
+        immut
+    }
 }
 
 impl Mutability for Mut {
     type Ref<'a, T: 'a + ?Sized> = &'a mut T;
+    type Select<I, M> = M;
+
+    fn select<I, M>(_: I, mutable: M) -> Self::Select<I, M> {
+        mutable
+    }
 }
 
 /// Hides implementation details.
